@@ -6,48 +6,27 @@
  * @return {number[][]}
  */
 const directions = [
-    [0, 1], // right
-    [1, 0], // down
-    [0, -1], // left
-    [-1, 0], // up
+    [0, 1], // right // east
+    [1, 0], // down // south
+    [0, -1], // left // west
+    [-1, 0], // up // north
 ];
 
 var spiralMatrixIII = function (rows, cols, rStart, cStart) {
     const size = rows * cols;
+    let dir = 0; // start the direction from the east 
+    let steps = 0;
     const res = [[rStart, cStart]];
-
-    let row = rStart;
-    let col = cStart;
-    let rightDown = 1;
-    let leftUp = 2;
     while (res.length < size) {
-        for (let i = 0; i < directions.length; i++) {
-            if (i <= 1) {
-                // right down
-                for (let j = 0; j < rightDown; j++) {
-                    row += directions[i][0];
-                    col += directions[i][1];
-
-                    if (row >= 0 && row < rows && col >= 0 && col < cols) {
-                        res.push([row, col]);
-                    }
-                }
-            } else {
-                // left up
-                for (let j = 0; j < leftUp; j++) {
-                    row += directions[i][0];
-                    col += directions[i][1];
-
-                    if (row >= 0 && row < rows && col >= 0 && col < cols) {
-                        res.push([row, col]);
-                    }
-                }
+        if(dir == 0 || dir == 2) steps++;
+        for(let i = 0;i<steps;i++){
+            rStart += directions[dir][0] // x 
+            cStart += directions[dir][1] // y
+            if(rStart < rows && cStart < cols && rStart >= 0 && cStart >= 0){
+                res.push([rStart,cStart]);
             }
         }
-
-        // update the pattern
-        rightDown += 2;
-        leftUp += 2;
+        dir = (dir+1)%4;
     }
 
     return res;
