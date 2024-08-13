@@ -2,75 +2,77 @@
  * @param {string[]} grid
  * @return {number}
  */
-const directions = [
-    [-1, 0], // up
-    [0, 1], // right
-    [1, 0], // down
-    [0, -1], //left
-];
-
-// this solution is taken from number of islands solution
-function dfs(matrix, row, col) {
-    matrix[row][col] = 1;
-
-    for (let direction of directions) {
-        const nextRow = row + direction[0];
-        const nextCol = col + direction[1];
-
-        if (
-            nextRow >= 0 &&
-            nextRow <= matrix.length - 1 &&
-            nextCol >= 0 &&
-            nextCol <= matrix[0].length - 1 &&
-            matrix[nextRow][nextCol] === 0
-        ) {
-            dfs(matrix, nextRow, nextCol);
+function fill(matrix, sign, row, col) {
+    if (sign == "/") {
+        matrix[0 + row][2 + col] = 1;
+        matrix[1 + row][1 + col] = 1;
+        matrix[2 + row][0 + col] = 1;
+    }
+    if (sign == "\\") {
+        matrix[0 + row][0 + col] = 1;
+        matrix[1 + row][1 + col] = 1;
+        matrix[2 + row][2 + col] = 1;
+    }
+    for (let i = row; i < row + 3; i++) {
+        for (let j = col; j < col + 3; j++) {
+            if (matrix[i][j] != 1) {
+                matrix[i][j] = 0;
+            }
         }
     }
 }
 
+function dfs(matrix, row, col) {
+    matrix[row][col] = 1; // for  visited;
+    const directions = [
+        [0, 1],
+        [1, 0],
+        [0, -1],
+        [-1, 0], // east // south // west // north
+    ];
+    let dir = 0;
+    for (dir of directions) {
+        let x = row + dir[0];
+        let y = col + dir[1];
+        if (
+            x >= 0 &&
+            y >= 0 &&
+            x < matrix.length &&
+            y < matrix.length &&
+            matrix[x][y] == 0
+        ) {
+            dfs(matrix, x, y);
+        }
+    }
+}
 var regionsBySlashes = function (grid) {
-    // initialize length of grid and matrix
-    const gridSize = grid.length;
-    const matrixSize = gridSize * 3;
-    const matrix = new Array(gridSize * 3)
-        .fill(null)
-        .map(() => new Array(gridSize * 3).fill(0));
-
-    // populate matrix with slashes
-    for (let i = 0; i < gridSize; i++) {
-        for (let j = 0; j < gridSize; j++) {
-            const row = i * 3;
-            const col = j * 3;
-
-            // backslash  slash
-            if (grid[i][j] === "\\") {
-                matrix[row][col] = 1;
-                matrix[row + 1][col + 1] = 1;
-                matrix[row + 2][col + 2] = 1;
-            }
-
-            // forward slash
-            if (grid[i][j] === "/") {
-                matrix[row][col + 2] = 1;
-                matrix[row + 1][col + 1] = 1;
-                matrix[row + 2][col] = 1;
+    // step 1 - is to create a matrix;
+    let row = grid.length;
+    let col = grid.length;
+    let matrix = Array(row * 3)
+        .fill()
+        .map(() => Array(col * 3).fill());
+    for (let i = 0; i < grid.length; i++) {
+        for (let j = 0; j < grid.length; j++) {
+            if (grid[i][j] == " ") {
+                fill(matrix, " ", i * 3, j * 3);
+            } else if (grid[i][j] == "/") {
+                fill(matrix, "/", i * 3, j * 3);
+            } else if (grid[i][j] == "\\") {
+                fill(matrix, "\\", i * 3, j * 3);
             }
         }
     }
 
-    // count regions
     let count = 0;
-    // do sequential search
-    for (let row = 0; row < matrixSize; row++) {
-        for (let col = 0; col < matrixSize; col++) {
-            // if we find 0 meaning we find new region and switch all the zero to 1 (like "number of islands")
-            if (matrix[row][col] === 0) {
-                dfs(matrix, row, col); // this solution is taken from number of islands solution
+    for (let i = 0; i < matrix.length; i++) {
+        for (let j = 0; j < matrix.length; j++) {
+            if (matrix[i][j] == 0) {
                 count++;
+                // call the dfs function
+                dfs(matrix, i, j);
             }
         }
     }
-
     return count;
 };
