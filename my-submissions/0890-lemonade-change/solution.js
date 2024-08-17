@@ -3,22 +3,34 @@
  * @return {boolean}
  */
 var lemonadeChange = function (bills) {
-    let fives = 0, tens = 0;
-    for (let bill of bills) {
-        if (bill === 5) {
-            fives++;
-        } else if (bill === 10) {
-            if (fives === 0) return false;
-            fives--;
-            tens++;
-        } else { // bill === 20
-            if (tens > 0 && fives > 0) {
-                tens--;
-                fives--;
-            } else if (fives >= 3) {
-                fives -= 3;
-            } else {
-                return false;
+    let map = {};
+    // initailaization of the map;
+    map[5] = 0;
+    map[10] = 0;
+    map[20] = 0;
+    for (let i = 0; i < bills.length; i++) {
+        let bill = bills[i];
+        if (bill == 5) {
+            map[bill]++;
+        } else if (bill > 5) {
+            // check what the change you have in your vault;
+            if (bill == 10) {
+                if (map[5]) {
+                    map[5]--;
+                    map[bill]++;
+                } else {
+                    return false;
+                }
+            } else if (bill == 20) {
+                if (map[10] && map[5]) {
+                    map[10]--;
+                    map[5]--;
+                    map[bill]++;
+                } else if (map[5] > 2) {
+                    map[5] -= 3;
+                } else {
+                    return false
+                }
             }
         }
     }
