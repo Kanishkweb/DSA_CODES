@@ -10,16 +10,22 @@
  * @param {TreeNode} root
  * @return {number[]}
  */
-let result;
 var postorderTraversal = function (root) {
-    result = [];
-    post(root);
+    const result = [];
+
+    const traverse = (node) => {
+        if (node === null) return;
+
+        // Traverse the left subtree
+        traverse(node.left);
+
+        // Traverse the right subtree
+        traverse(node.right);
+
+        // Visit the root node
+        result.push(node.val);
+    };
+
+    traverse(root);
     return result;
 };
-
-function post(r) {
-    if (r == null) return;
-    post(r.left);
-    post(r.right);
-    result.push(r.val);
-}
