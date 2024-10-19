@@ -1,23 +1,25 @@
-var countMaxOrSubsets = function(nums) {
-    let maxOR = 0;
-    for (let num of nums) {
-        maxOR |= num;
+/**
+ * @param {number[]} nums
+ * @return {number}
+ */
+var countMaxOrSubsets = function (nums) {
+    let totLen = 1 << nums.length;
+    let count = 0;
+    let maxOR;
+    for (let i = 0; i < nums.length; i++) {
+        maxOR = nums[i] | maxOR;
     }
-    return backtrack(nums, maxOR, 0, 0);
+
+    for (i = 1; i < totLen; i++) { // for not to including non empty subsets
+        let currMax = 0;
+        for (j = 0; j < nums.length; j++) {
+            if ((1 << j) & i) {
+                currMax = currMax | nums[j];
+            }
+        }
+        if (currMax == maxOR) {
+            count++;
+        }
+    }
+    return count;
 };
-
-function backtrack(nums, maxOR, index, currentOR) {
-    if (index === nums.length) {
-        return currentOR === maxOR ? 1 : 0;
-    }
-    if (currentOR === maxOR) {
-        return 1 << (nums.length - index);
-    }
-    let include = backtrack(nums, maxOR, index + 1, currentOR | nums[index]);
-    let exclude = backtrack(nums, maxOR, index + 1, currentOR);
-    return include + exclude;
-}
-
-// Example usage
-const nums = [3, 1, 5];
-console.log(countMaxOrSubsets(nums));  // Output: 6
