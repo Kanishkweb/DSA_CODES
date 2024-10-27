@@ -11,29 +11,39 @@
  * @param {number} k
  * @return {number}
  */
-
 var kthLargestLevelSum = function (root, k) {
-    let maxHeap = new MaxPriorityQueue({ compare: (a, b) => b - a })
-    
-    function dfs(childArr){
-        if(childArr.length===0)return
-        let sum=0
-        let nextChildArr=[]
-        for(let child of childArr){
-            sum+=child.val
-            if(child.left)nextChildArr.push(child.left)
-            if(child.right)nextChildArr.push(child.right)
+    if (root == null) return [];
+    let queue = [];
+    let res = [];
+    let temp = 0;
+    // put the first root element in the queue
+    // also put a null after that
+    queue.push(root); // enqueue
+    queue.push(null); // enqueue
+    while (queue.length != 0) {
+        let getfront = queue.shift() // getfront
+        if (getfront == null) {
+            res.push(temp);
+            temp = 0;
+            // also dequeue null already done // now enqueue null
+            if (queue.length != 0) {
+                queue.push(null);
+            }
+            continue;
         }
-        maxHeap.enqueue(sum)
-        dfs(nextChildArr)
+        temp += getfront.val;
+        if (getfront.left != null) {
+            queue.push(getfront.left);
+        }
+        if (getfront.right != null) {
+            queue.push(getfront.right);
+        }
     }
-
-    dfs([root])
-
-    let top 
-    while(k){
-        top = maxHeap.dequeue()
-        k--
+    res.sort((a,b) =>{
+        return b - a;
+    })
+    if (res.length < k) {
+        return -1;
     }
-    return top||-1
+    return res[k - 1];
 };
