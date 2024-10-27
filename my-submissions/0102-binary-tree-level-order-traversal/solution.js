@@ -10,82 +10,33 @@
  * @param {TreeNode} root
  * @return {number[][]}
  */
-
-function createNode(value) {
-    return {
-        val: value,
-        next: null,
-    };
-}
-
-class MyQueue {
-    constructor() {
-        this.head = null; // front
-        this.tail = null; // back
-    }
-
-    enqueue(x) {
-        let newNode = createNode(x);
-        // add at tail
-        if (this.tail == null) {
-            this.head = newNode;
-            this.tail = newNode;
-        } else {
-            this.tail.next = newNode;
-            this.tail = newNode;
-        }
-    }
-
-    dequeue() {
-        if (this.head == null) return;
-        let nextNode = this.head.next;
-        this.head.next = null;
-        this.head = nextNode;
-        if (this.head == null) {
-            this.tail = null;
-        }
-    }
-
-    getFront() {
-        if (this.head == null) return;
-        return this.head.val;
-    }
-
-    getBack() {
-        if (this.head == null) return;
-        return this.tail.val;
-    }
-
-    empty() {
-        return this.head == null;
-    }
-}
-
 var levelOrder = function (root) {
-    if (root == null) return []
-    let result = [];
-    let arr = [];
-    let q = new MyQueue();
-    q.enqueue(root);
-    q.enqueue(null);
-    while (!q.empty()) {
-        let front = q.getFront();
-        q.dequeue();
-        if (front == null) {
-            result.push(arr);
-            arr = [];
-            if (q.empty()) break;
-            q.enqueue(null);
+    if(root == null) return [];
+    let queue = [];
+    let res = [];
+    let temp = [];
+    // put the first root element in the queue
+    // also put a null after that
+    queue.push(root); // enqueue
+    queue.push(null); // enqueue
+    while (queue.length != 0) {
+        let getfront = queue.shift() // getfront
+        if (getfront == null) {
+            res.push(temp);
+            temp = [];
+            // also dequeue null already done // now enqueue null
+            if (queue.length != 0) {
+                queue.push(null);
+            }
             continue;
         }
-        arr.push(front.val);
-        if (front.left) {
-            q.enqueue(front.left);
+        temp.push(getfront.val);
+        if (getfront.left != null) {
+            queue.push(getfront.left);
         }
-        if (front.right) {
-            q.enqueue(front.right);
+        if (getfront.right != null) {
+            queue.push(getfront.right);
         }
     }
-    return result;
+    return res;
 };
-
