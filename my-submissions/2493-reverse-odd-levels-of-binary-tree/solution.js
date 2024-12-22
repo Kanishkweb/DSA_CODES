@@ -10,50 +10,48 @@
  * @param {TreeNode} root
  * @return {TreeNode}
  */
+
+function reverse(temp, root) {
+    for (let i = 0, j = temp.length - 1; i <= j; i++, j--) {
+        let op = temp[i].val;
+        temp[i].val = temp[j].val;
+        temp[j].val = op;
+    }
+    // return root;
+}
+
 var reverseOddLevels = function (root) {
-    // Edge case: if the tree is empty, return the root (null)
-    if (root === null) return root;
-
-    // Queue for level order traversal (using an array for the queue)
-    let queue = [root];
-
-    // Flag to keep track of odd levels
-    let isOddLevel = false;
-
-    // Perform level order traversal
+    let queue = [];
+    let isOdd = false;
+    queue.push(root);
+    queue.push(0);
+    let temp = [];
     while (queue.length > 0) {
-        let levelSize = queue.length;  // Number of nodes at the current level
-        let currentLevelNodes = [];
-
-        // Process nodes at the current level
-        for (let i = 0; i < levelSize; i++) {
-            let node = queue.shift();  // Dequeue the front node
-
-            // Add children to the queue for the next level
-            if (node.left !== null) queue.push(node.left);
-            if (node.right !== null) queue.push(node.right);
-
-            // Store the node at the current level
-            currentLevelNodes.push(node);
-        }
-
-        // If we are at an odd level, reverse the node values
-        if (isOddLevel) {
-            let left = 0, right = currentLevelNodes.length - 1;
-            while (left < right) {
-                // Swap the values of the nodes at the two ends
-                let temp = currentLevelNodes[left].val;
-                currentLevelNodes[left].val = currentLevelNodes[right].val;
-                currentLevelNodes[right].val = temp;
-                left++;
-                right--;
+        let front = queue.shift();
+        if (front == 0) {
+            if (isOdd) {
+                reverse(temp, root);
+            }
+            if (queue.length == 0) {
+                continue;
+            } else {
+                queue.push(0);
+                temp = [];
+                if (isOdd == false) {
+                    isOdd = true
+                } else {
+                    isOdd = false
+                }
+                continue;
             }
         }
-
-        // Toggle the flag to switch between odd and even levels
-        isOddLevel = !isOddLevel;
+        temp.push(front);
+        if (front.left) {
+            queue.push(front.left)
+        }
+        if (front.right) {
+            queue.push(front.right)
+        }
     }
-
-    // Return the root after modifying the tree
     return root;
 };
