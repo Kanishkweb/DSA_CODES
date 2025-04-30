@@ -2,17 +2,19 @@
  * @param {string} s
  * @return {number}
  */
-var maxScore = function(s) {
-    let totalZeros = 0, zeros = 0, ans = -1, n = s.length;
-    for (let c of s) {
-        if (c === '0') totalZeros++;
+var maxScore = function (s) {
+    // count no of 1;
+    let left = 0;
+    let right = 0;
+    for (let i = 0; i < s.length; i++) {
+        if (s[i] == "1") right++;
     }
-    for (let i = 1; i < n; i++) {
-        if (s[i - 1] === '0') {
-            zeros++;
-            totalZeros--;
-        }
-        ans = Math.max(ans, zeros + (n - totalZeros - i));
+    let score = 0;
+    for (let i = 0; i < s.length-1; i++) {
+        if (s[i] == "0") left++;
+        else right--;
+
+        score = Math.max(score, left + right);
     }
-    return ans;
+    return score;
 };
