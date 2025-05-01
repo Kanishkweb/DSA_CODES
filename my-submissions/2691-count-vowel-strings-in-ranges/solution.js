@@ -1,42 +1,27 @@
-/**
- * @param {string[]} words
- * @param {number[][]} queries
- * @return {number[]}
- */
-var vowelStrings = function(words, queries) {
-    let n = words.length;
-    let Prefix = new Array(n + 1).fill(0);
-    let vowels = new Set(['a', 'e', 'i', 'o', 'u']);
+function check(firstChar, lastChar) {
+    const vowels = new Set(['a', 'e', 'i', 'o', 'u']);
+    return vowels.has(firstChar) && vowels.has(lastChar) ? 1 : 0;
+}
 
-    for (let i = 0; i < n; i++) {
-        Prefix[i + 1] = Prefix[i];
-        if (vowels.has(words[i][0]) && vowels.has(words[i][words[i].length - 1])) {
-            Prefix[i + 1]++;
+var vowelStrings = function (words, queries) {
+    let prefix = new Array(words.length).fill(0);
+    let cumu = 0;
+
+    for (let i = 0; i < words.length; i++) {
+        let firstChar = words[i][0];
+        let lastChar = words[i][words[i].length - 1];
+        cumu += check(firstChar, lastChar);
+        prefix[i] = cumu;
+    }
+
+    let ans = [];
+    for (let [l, r] of queries) {
+        if (l === 0) {
+            ans.push(prefix[r]);
+        } else {
+            ans.push(prefix[r] - prefix[l - 1]);
         }
     }
-
-    let result = new Array(queries.length);
-    for (let i = 0; i < queries.length; i++) {
-        result[i] = Prefix[queries[i][1] + 1] - Prefix[queries[i][0]];
-    }
-
-    return result;
-};var vowelStrings = function(words, queries) {
-    let n = words.length;
-    let Prefix = new Array(n + 1).fill(0);
-    let vowels = new Set(['a', 'e', 'i', 'o', 'u']);
-
-    for (let i = 0; i < n; i++) {
-        Prefix[i + 1] = Prefix[i];
-        if (vowels.has(words[i][0]) && vowels.has(words[i][words[i].length - 1])) {
-            Prefix[i + 1]++;
-        }
-    }
-
-    let result = new Array(queries.length);
-    for (let i = 0; i < queries.length; i++) {
-        result[i] = Prefix[queries[i][1] + 1] - Prefix[queries[i][0]];
-    }
-
-    return result;
+    return ans;
 };
+
