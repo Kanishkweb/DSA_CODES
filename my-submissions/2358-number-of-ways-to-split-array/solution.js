@@ -2,21 +2,23 @@
  * @param {number[]} nums
  * @return {number}
  */
-var waysToSplitArray = function(nums) {
-    let count = 0
-    const prefix = Array(nums.length + 1).fill(0)
-
-    for(let i=0; i<nums.length; i++){
-        prefix[i+1] = prefix[i] + nums[i]
+var waysToSplitArray = function (nums) {
+    let prefix = [];
+    let sum = 0;
+    // store the sum in prefexSum Arr
+    for (let i = 0; i < nums.length; i++) {
+        sum += nums[i];
+        prefix.push(sum);
     }
-
-    for(let i=0; i<nums.length-1; i++){
-        const slpit_index = i + 1
-        const left_sum = prefix[slpit_index] - prefix[0]
-        const right_sum = prefix[prefix.length-1] - prefix[slpit_index]
-
-        if(left_sum >= right_sum) count++
+    // all prefixSum stored successfully
+    // now step -2 
+    let n = nums.length - 1;
+    let count = 0;
+    for (let i = 0; i < nums.length - 1; i++) {
+        let split = i;
+        if (prefix[split] >= prefix[n] - prefix[split]) {
+            count++;
+        }
     }
-
-    return count
+    return count;
 };
