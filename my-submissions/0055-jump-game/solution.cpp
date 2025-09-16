@@ -1,24 +1,25 @@
 class Solution {
 public:
-    int t[10001];
-    bool solve(vector<int>& nums, int n, int idx) {
-        if (idx == n - 1) {
+    // initialization for dp;
+    int dp[10001];
+    bool solve(vector<int>& nums, int index, int n) {
+        if (index >= n-1)
             return true;
-        }
-        if (t[idx] != -1) {
-            return t[idx];
-        }
-        for (int i = 1; i <= nums[idx]; i++) {
-            if (solve(nums, n, idx + i) == true) {
-                return t[idx] = true;
+        if (dp[index] != -1)
+            return dp[index];
+        // the size of the nums array is n;
+        for (int i = 1; i <= nums[index]; i++) {
+            if (solve(nums, index + i, n)) {
+                return dp[index] = true;
             }
         }
-        return t[idx] = false;
-    }
 
+        return dp[index] = false;
+    }
     bool canJump(vector<int>& nums) {
-        int n = nums.size();
-        memset(t, -1, sizeof(t));
-        return solve(nums, n, 0);
+        // memset(test, -1, test.size());
+        // from here we will return
+        memset(dp, -1, sizeof(dp));
+        return solve(nums, 0, nums.size());
     }
 };
