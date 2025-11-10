@@ -9,13 +9,15 @@
 class Solution {
 public:
     bool hasCycle(ListNode* head) {
-        auto rabbit = head;
-        while (rabbit && rabbit->next) {
-            head = head->next;
-            rabbit = rabbit->next
-                         ->next; // move two times forward as rabbit jumps fast;
-            if (head == rabbit)
+        // Hashmap approach
+        map<ListNode*, bool> visited;
+        while (head != NULL) {
+            if (!visited[head]) {
+                visited[head] = true;
+            } else if (visited[head] == true) {
                 return true;
+            }
+            head = head->next;
         }
         return false;
     }
