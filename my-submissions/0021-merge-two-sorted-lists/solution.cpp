@@ -14,22 +14,25 @@ public:
         ListNode dummy(0);
         ListNode* curr = &dummy;
 
-        while (list1 && list2) {
-            if (list1->val >= list2->val) {
-                curr->next = list2;
+        while (list1 || list2) {
+            int store = 0;
+            if (!list1) {
+                store = list2->val;
                 list2 = list2->next;
-            } else {
-                curr->next = list1;
+            } else if (!list2) {
+                store = list1->val;
                 list1 = list1->next;
+            } else if(list1->val <= list2->val){
+                store = list1->val;
+                list1 = list1->next;
+            } else {
+                store = list2->val;
+                list2 = list2->next;
             }
+            curr->next = new ListNode(store);
             curr = curr->next;
         }
-        if (list1) {
-            curr->next = list1;
-        }
-        if (list2) {
-            curr->next = list2;
-        }
+
         return dummy.next;
     }
 };
