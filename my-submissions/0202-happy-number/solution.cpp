@@ -1,20 +1,21 @@
 class Solution {
 public:
     bool isHappy(int n) {
-        set<int> seen;
-        if (n == 1)
-            return true;
-        while (seen.find(n) == seen.end()) {
-            seen.insert(n);
+        int temp = n;
+        unordered_map<int, bool> mp;
+        while (n != 1) {
+            if (mp[n])
+                return false;
+            mp[n] = true;
+            temp = n;
             int sum = 0;
-            while (n > 0) {
-                int digit = n % 10;
-                sum += digit * digit;
-                n = n / 10;
+            while (temp != 0) {
+                int op = temp % 10;
+                sum += op*op;
+                temp = temp / 10;
             }
-            n = sum;
-            // also store the value in set
+            n = sum; // saves the total 
         }
-        return n == 1;
+        return true;
     }
 };
