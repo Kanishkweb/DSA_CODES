@@ -1,25 +1,14 @@
 class Solution {
 public:
-    // initialization for dp;
-    int dp[10001];
-    bool solve(vector<int>& nums, int index, int n) {
-        if (index >= n-1)
-            return true;
-        if (dp[index] != -1)
-            return dp[index];
-        // the size of the nums array is n;
-        for (int i = 1; i <= nums[index]; i++) {
-            if (solve(nums, index + i, n)) {
-                return dp[index] = true;
+    bool canJump(vector<int>& nums) {
+        int reachMax = 0;
+        for(int i = 0;i<nums.size();i++){
+            if(reachMax < i) {
+                return false;
+            } else{
+                reachMax = max(reachMax,i + nums[i]);
             }
         }
-
-        return dp[index] = false;
-    }
-    bool canJump(vector<int>& nums) {
-        // memset(test, -1, test.size());
-        // from here we will return
-        memset(dp, -1, sizeof(dp));
-        return solve(nums, 0, nums.size());
+        return true;
     }
 };
