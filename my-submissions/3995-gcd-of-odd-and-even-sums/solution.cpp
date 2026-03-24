@@ -1,16 +1,19 @@
 class Solution {
 public:
-int gcdcalc(int a,int b){
-    if(b == 0){
-        return a;
-    } else {
-        return gcdcalc(b,a%b);
-    }
-}
     int gcdOfOddEvenSums(int n) {
-        // euclidean algorithm;
-        long long int sumOdd = n*n;
-        long long int sumEven = n*(n+1);
-        return gcdcalc(sumOdd,sumEven);
+        // calc the number of the two integer
+        if (n == 0)
+            return 0;
+        int sumOdd = n*n;
+        int sumEven = n*(n+1);
+        
+        int result = min(sumOdd,sumEven);
+        while(result > 0){
+            if(sumEven % result == 0 && sumOdd % result == 0){
+                break;
+            }
+            result--;
+        }
+        return result;
     }
 };
