@@ -1,41 +1,54 @@
 class Solution {
 public:
-    set<string> wordDic;
-
-    bool solve(int idx, string &s, vector<int> &memo) {
-        // base case -> reached end
-        if (idx == s.size())
-            return true;
-
-        // already computed
-        if (memo[idx] != -1)
-            return memo[idx];
-
-        string temp = "";
-
-        for (int i = idx; i < s.size(); i++) {
-            temp += s[i];
-
-            // if word found in dictionary
-            if (wordDic.find(temp) != wordDic.end()) {
-
-                // try breaking remaining string
-                if (solve(i + 1, s, memo))
-                    return memo[idx] = true;
+    class TrieNode {
+    public:
+        bool isEnd = false;
+        TrieNode* children[26];
+        TrieNode() {
+            for (int i = 0; i < 26; i++) {
+                children[i] = NULL;
             }
         }
+    };
 
-        return memo[idx] = false;
+    bool solve(TrieNode* root, string& s, int idx, vector<int>& dp) {
+        // basecase
+        if (idx == s.length())
+            return true;
+        if (dp[idx] != -1)
+            return dp[idx];
+        TrieNode* curr = root;
+
+        for (int i = idx; i < s.length(); i++) {
+            int n = s[i] - 'a';
+            if (!curr->children[n])
+                break;
+            curr = curr->children[n];
+            if (curr->isEnd) {
+                if (solve(root, s, i + 1, dp)) {
+                    return dp[idx] = true;
+                }
+            }
+        }
+        // if not exist in the TrieNode
+        return dp[idx] = false;
     }
 
     bool wordBreak(string s, vector<string>& wordDict) {
-
-        for (string &w : wordDict)
-            wordDic.insert(w);
-
-        vector<int> memo(s.size(), -1);
-
-        return solve(0, s, memo);
+        // time to fill the trie
+        TrieNode* root = new TrieNode();
+        for (int i = 0; i < wordDict.size(); i++) {
+            TrieNode* curr = root;
+            for (char ch : wordDict[i]) {
+                int n = ch - 'a';
+                if (!curr->children[n]) {
+                    curr->children[n] = new TrieNode();
+                }
+                curr = curr->children[n];
+            }
+            curr->isEnd = true;
+        }
+        vector<int> dp(s.length(), -1);
+        return solve(root, s, 0, dp);
     }
 };
-
