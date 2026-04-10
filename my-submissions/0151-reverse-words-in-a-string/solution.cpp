@@ -1,12 +1,12 @@
 class Solution {
 public:
     string reverseWords(string s) {
-        string ans;
-        string ullu;
+        string ans = "";
+        string word;
         stringstream ss(s);
 
-        while(ss >> ullu){
-            ans = ullu + (ans.empty() ? "" : " ") + ans;
+        while(ss >> word){
+            ans = word + (ans.empty() ? "" : " ") + ans;
         }
         return ans;
     }
