@@ -12,13 +12,19 @@
  */
 class Solution {
 public:
+    int maxDep = INT_MIN;
+    void dfs(TreeNode* root, int depth) {
+        if (root == NULL)
+            return;
+
+        dfs(root->left, depth + 1);
+        dfs(root->right, depth + 1);
+        maxDep = max(maxDep, depth);
+    }
     int maxDepth(TreeNode* root) {
-        if (root == nullptr)
-            return 0;
-
-        int lH = 1 + maxDepth(root->left);
-        int rH = 1 + maxDepth(root->right);
-
-        return max(lH, rH);
+        // edge case
+        if(root == NULL) return 0;
+        dfs(root, 0);
+        return maxDep+1;
     }
 };
