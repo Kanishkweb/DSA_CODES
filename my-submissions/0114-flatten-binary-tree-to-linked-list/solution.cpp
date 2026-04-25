@@ -12,13 +12,19 @@
 class Solution {
 public:
     TreeNode* NP = NULL;
-    void flatten(TreeNode* root) {
-        // preorder reverse traversal // right // left // root;
-        if(root == NULL) return; 
-        flatten(root->right);
-        flatten(root->left);
+    void solve(TreeNode *& root){
+        // base case 
+        if(root == NULL) return;
+
+        solve(root->right);
+        solve(root->left);
+        // not the main element is root
         root->left = NULL;
         root->right = NP;
         NP = root;
+    }
+
+    void flatten(TreeNode* root) {
+        solve(root);
     }
 };
