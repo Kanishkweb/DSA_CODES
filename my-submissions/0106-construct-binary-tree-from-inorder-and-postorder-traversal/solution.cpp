@@ -11,34 +11,30 @@
  */
 class Solution {
 public:
-    TreeNode* solve(vector<int>& inorder, vector<int>& postorder,int inStart,int inEnd , int postStart, int postEnd){
-        if(inStart > inEnd){
-            return NULL;
-        }
-        TreeNode * root = new TreeNode(postorder[postEnd]);
-        int i = inStart;
-        // Linear Search;
-        for(;i<=inEnd;i++){
-            if(inorder[i] == root->val){
-                break;
-            }
-        }
+    TreeNode* solve(vector<int>&inorder, vector<int>&postorder,int start,int end,int &idx){
+        // base case
+        if(start > end) return NULL;
 
-        int leftSize = i - inStart;
-        int rightSize = inEnd - i;
+        int rootVal = postorder[idx];
+        int i = start;
+        for(;i<=end;i++){
+            if(inorder[i] == rootVal) break;
+        }
+        idx--;
 
-        root->left = solve(inorder,postorder,inStart,i-1,postStart,postEnd-rightSize-1);
-        root->right = solve(inorder,postorder,i+1,inEnd,postEnd-rightSize,postEnd-1);
+        TreeNode* root = new TreeNode(rootVal);
+
+        root->right = solve(inorder,postorder, i+1,end,idx);
+        root->left = solve(inorder,postorder,start,i-1,idx);
+
         return root;
+
     }
+
     TreeNode* buildTree(vector<int>& inorder, vector<int>& postorder) {
-        int n = inorder.size()-1;
-        int postStart = 0;
-        int postEnd = n;
-        int inStart = 0;
-        int inEnd = n;
+        int n = inorder.size();
 
-        return solve(inorder,postorder,inStart,inEnd,postStart,postEnd);
+        int idx = n-1;
+        return solve(inorder,postorder,0,n-1,idx);
     }
-
 };
