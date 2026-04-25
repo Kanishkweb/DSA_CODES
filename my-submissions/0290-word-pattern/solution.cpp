@@ -1,33 +1,31 @@
 class Solution {
 public:
     bool wordPattern(string pattern, string s) {
-        unordered_map<char, string> mp;
-        unordered_map<string, char> mt;
-        string word;
-        vector<string> arr;
         stringstream ss(s);
-
-        while (ss >> word) {
-            arr.push_back(word);
-        }
-
-        if (pattern.length() != arr.size())
-            return false;
-
-        for (int i = 0; i < pattern.length(); i++) {
-            if (mp.find(pattern[i]) == mp.end()) {
-                if (mt.find(arr[i]) != mt.end()) {
-                    return false;
-                }
-                mp[pattern[i]] = arr[i];
-                mt[arr[i]] = pattern[i];
+        string word;
+        unordered_map<char,string>mp;
+        set<string>st;
+        int i = 0;
+        int len = 0;
+        while(ss >> word){
+            char ch = pattern[i];
+            len++;
+            if(mp.find(ch) == mp.end() && st.find(word) == st.end()){
+                mp[ch] = word;
+                st.insert(word);
             }
+            i++;
+        };
+        if(len != pattern.size()) return false;
+        stringstream rr(s);
+        for(int j=0;j<pattern.size();j++){
+            rr >> word;
+            char ch = pattern[j];
+            if(word != mp[ch]) return false;
+            i++;
         }
-        // now check for the each word pattern;
-        for (int i = 0; i < pattern.length(); i++) {
-            if (mp[pattern[i]] != arr[i])
-                return false;
-        }
+
+        // after the last it is sure that it is true;
         return true;
     }
 };
