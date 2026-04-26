@@ -1,22 +1,26 @@
 class Solution {
 public:
-    vector<vector<int>> result;
-
-    void helper(int n, int k, int index, vector<int>& temp) {
-        if (temp.size() == k) {
+    vector<vector<int>>result;
+    void helper(vector<int>&temp,int &n , int &k,int idx){
+        // base case
+        if(temp.size() == k){
             result.push_back(temp);
-            return;
         }
-        for (int i = index; i <= n;i++) {
+
+        for(int i = idx;i<=n;i++){
+            // do
             temp.push_back(i);
-            helper(n, k, i + 1, temp);
+            // explore
+            helper(temp,n,k,i+1);
+            // backtrack
             temp.pop_back();
         }
     }
+
     vector<vector<int>> combine(int n, int k) {
-        vector<int> temp;
-        int index = 1;
-        helper(n, k, index, temp);
+        int idx = 1;
+        vector<int>temp;
+        helper(temp,n,k,idx);
         return result;
     }
 };
