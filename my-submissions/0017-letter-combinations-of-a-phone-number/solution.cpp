@@ -1,28 +1,31 @@
 class Solution {
 public:
-    vector<string> arr = {"aaa", "aaa", "abc",  "def", "ghi",
-                          "jkl", "mno", "pqrs", "tuv", "wxyz"};
-
-    // for better indexing added "aaa";
     vector<string> result;
-    void helper(string digits, string& str) {
-        if (digits.length() == 0) {
-            result.push_back(str);
+    void solve(string digits, unordered_map<char, string>& mp, string& temp,
+               int idx) {
+        if (temp.length() == digits.length()) {
+            result.push_back(temp);
             return;
         }
 
-        string remaining = digits.substr(1);
-        char ch = digits[0];
-        int digit = ch - '0';
-        for (int i = 0; i < arr[digit].length(); i++) {
-            str += arr[digit][i];
-            helper(remaining, str);
-            str.pop_back(); // backtrack
+        string op = mp[digits[idx]];
+        for (int i = 0; i < op.length(); i++) {
+            // do
+            temp.push_back(op[i]);
+            // explore
+            solve(digits, mp, temp, idx + 1);
+            // undo
+            temp.pop_back();
         }
     }
     vector<string> letterCombinations(string digits) {
-        string str = "";
-        helper(digits, str);
+        unordered_map<char, string> mp = {
+            {'2', "abc"}, {'3', "def"},  {'4', "ghi"}, {'5', "jkl"},
+            {'6', "mno"}, {'7', "pqrs"}, {'8', "tuv"}, {'9', "wxyz"}};
+
+        string temp;
+        int idx = 0;
+        solve(digits, mp, temp, idx);
         return result;
     }
 };
