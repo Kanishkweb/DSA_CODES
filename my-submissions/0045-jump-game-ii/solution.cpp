@@ -1,20 +1,30 @@
 class Solution {
 public:
-    int jump(vector<int>& nums) {
-        if (nums.size() <= 1)
+    int dp[10001];
+    int minStep = INT_MAX;
+    int solve(vector<int>& nums, int idx) {
+        // base case
+        int n = nums.size();
+        if (idx >= n - 1) {
             return 0;
-        int reachMax = 0;
-        int lastIdx = nums.size() - 1;
-        int count = 0;
-        int stIdx = 0;
-        for (int i = 0; i < nums.size(); i++) {
-            reachMax = max(reachMax, i + nums[i]);
-            if(stIdx <= i){
-                count++;
-                stIdx = reachMax;
-                if(stIdx >= lastIdx) break;
+        }
+        if (dp[idx] != -1)
+            return dp[idx];
+        int op = nums[idx];
+        int step = INT_MAX;
+        for (int i = 1; i <= op; i++) {
+            int nextStep = solve(nums, idx + i);
+            if (nextStep != INT_MAX) {
+
+                step = min(step,1 + nextStep);
             }
         }
-        return count;
+        return dp[idx] = step;
+    }
+
+    int jump(vector<int>& nums) {
+        int steps = 0;
+        memset(dp, -1, sizeof(dp));
+        return solve(nums, 0);
     }
 };
