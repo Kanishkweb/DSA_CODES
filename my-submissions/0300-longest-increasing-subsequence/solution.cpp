@@ -1,29 +1,23 @@
 class Solution {
 public:
-    int binarySearch(vector<int>& result, int target) {
-        int start = 0;
-        int end = result.size() - 1;
-        while (start <= end) {
-            int mid = start + (end - start) / 2;
-            if (result[mid] < target) {
-                start = mid + 1;
-            } else {
-                end = mid - 1;
-            }
+    int solve(vector<int>& nums, int prev, int idx, vector<vector<int>>& dp) {
+        int n = nums.size();
+        if (idx >= n)
+            return 0;
+        if(prev != -1 && dp[idx][prev] != -1) return dp[idx][prev];
+        int take = INT_MIN;
+        if (prev == -1 || nums[prev] < nums[idx]) {
+            take = 1 + solve(nums, idx, idx + 1, dp);
         }
-        return start;
+        int notTake = solve(nums, prev, idx + 1, dp);
+        if(prev != -1){
+            return dp[idx][prev] = max(take,notTake);
+        }
+        return max(take,notTake);
     }
     int lengthOfLIS(vector<int>& nums) {
-        vector<int> result;
-        result.push_back(nums[0]);
-        for (int i = 1; i < nums.size(); i++) {
-            if (result[result.size() - 1] < nums[i]) {
-                result.push_back(nums[i]);
-            } else {
-                int position = binarySearch(result, nums[i]);
-                result[position] = nums[i];
-            }
-        }
-        return result.size();
+        int n = nums.size();
+        vector<vector<int>> dp(n, vector<int>(n+1, -1));
+        return solve(nums, -1,0, dp);
     }
 };
