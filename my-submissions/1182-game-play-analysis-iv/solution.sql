@@ -1,5 +1,12 @@
 # Write your MySQL query statement below
-select
-round(sum(player_login)/count(distinct player_id),2) as fraction
-from 
-(select player_id , datediff(event_date, min(event_date) over(partition by player_id)) =1 as player_login from activity ) as new_table;
+select round(count(distinct player_id)/(select count(distinct player_id) from Activity),2) as fraction
+from  (select a1.player_id
+from Activity a1
+inner join (
+    select player_id , MIN(event_date) as first_date
+    from Activity
+    group by player_id
+) 
+a2 ON a1.player_id = a2.player_id 
+and datediff(a1.event_date,a2.first_date) = 1) test;
+
