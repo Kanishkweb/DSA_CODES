@@ -10,56 +10,47 @@ public:
             }
         }
     };
-    bool isEmpty(TrieNode* node) {
-    for (int i = 0; i < 26; i++)
-        if (node->children[i])
-            return false;
-    return true;
-}
+    vector<int> dy = {-1, 0, 1, 0}; // row
+    vector<int> dx = {0, 1, 0, -1}; // col
+    void solve(TrieNode* root, int i, int j, vector<vector<char>>& board,
+               string& res, vector<string>& result) {
+        int m = board.size();
+        int n = board[0].size();
 
-void solve(TrieNode* root, int i, int j, vector<vector<char>>& board,
-           vector<vector<int>>& visited, string &res, vector<string>& result) {
+        if (root->isEnd) {
+            result.push_back(res);
+            root->isEnd = false;
+        }
 
-    if (root->isEnd) {
-        result.push_back(res);
-        root->isEnd = false;
-    }
+        for (int l = 0; l < 4; l++) {
+            int row = i + dy[l];
+            int col = j + dx[l];
 
-    int m = board.size();
-    int n = board[0].size();
+            if (row < 0 || row >= m || col < 0 || col >= n) {
+                continue;
+            }
 
-    vector<int> dy = {-1,0,1,0};
-    vector<int> dx = {0,1,0,-1};
+            if (board[row][col] == '$') {
+                continue;
+            }
 
-    for(int l=0;l<4;l++){
-        int row=i+dy[l];
-        int col=j+dx[l];
+            int place = board[row][col] - 'a';
+            if (root->children[place] == NULL) {
+                continue;
+            }
 
-        if(row<0||row>=m||col<0||col>=n||visited[row][col]) continue;
+            char oldChar = board[row][col];
+            res.push_back(board[row][col]);
+            board[row][col] = '$';
 
-        int place = board[row][col]-'a';
-        TrieNode* child = root->children[place];
+            solve(root->children[place], row, col, board, res, result);
 
-        if(child==NULL) continue;
-
-        visited[row][col]=1;
-        res.push_back(board[row][col]);
-
-        solve(child,row,col,board,visited,res,result);
-
-        // BACKTRACK
-        res.pop_back();
-        visited[row][col]=0;
-
-        // ⭐ TRIE PRUNING (KEY FIX)
-        if(isEmpty(child) && child->isEnd==false){
-            delete child;
-            root->children[place]=NULL;
+            // Backtrack
+            res.pop_back();
+            board[row][col] = oldChar;
         }
     }
-}
 
-    
     vector<string> findWords(vector<vector<char>>& board,
                              vector<string>& words) {
         // fill all the words in trie;
@@ -75,25 +66,23 @@ void solve(TrieNode* root, int i, int j, vector<vector<char>>& board,
             }
             curr->isEnd = true;
         }
-        
+
         vector<string> result;
         int m = board.size();
         int n = board[0].size();
-        vector<vector<int>> visited(m, vector<int>(n, 0));
-        
+
         for (int i = 0; i < m; i++) {
             for (int j = 0; j < n; j++) {
                 string res = "";
-                // visited.assign(m, vector<int>(n, 0));
-                
+
                 int place = board[i][j] - 'a';
-                
                 if (root->children[place] != NULL) {
-                    visited[i][j] = 1;
+                    char oldChar = board[i][j];
                     res.push_back(board[i][j]);
-                    
-                    solve(root->children[place], i, j, board, visited, res, result);
-                     visited[i][j] = 0;
+                    board[i][j] = '$';
+
+                    solve(root->children[place], i, j, board, res, result);
+                    board[i][j] = oldChar;
                 }
             }
         }
