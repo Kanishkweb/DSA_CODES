@@ -1,49 +1,38 @@
 class Solution {
 public:
-    
-    int solve(vector<int>&prices, int day, int transactionsLeft, vector<vector<int>> &Memo){
-        
-        if(day == prices.size()){
+    int solve(vector<int>& prices, int day, int transactionLeft,
+              vector<vector<int>>& dp) {
+        // base case
+        int n = prices.size();
+        if (day >= n)
+            return 0;
+        if (transactionLeft == 0) {
             return 0;
         }
-        
-        if(transactionsLeft == 0){
-            return 0;
-        }
-        
-        int &ans = Memo[day][transactionsLeft]; 
-        
-        if(ans != -1){ // if problem has already been solved 
-            return ans;
-        }
-        
-        // choice 1
-        // no transaction today
-        int ans1 = solve(prices, day + 1, transactionsLeft, Memo);
-        
-        
-        // choice 2
-        // doing the possible transaction today     
+
+        if (dp[day][transactionLeft] != -1)
+            return dp[day][transactionLeft];
+
+        // choise 1 -- skip
+        int ans1 = solve(prices, day + 1, transactionLeft, dp);
+
+        // choise 2 -- transaction - (buy,sell);
         int ans2 = 0;
-        bool buy = (transactionsLeft % 2 == 0);
-        
-        if(buy == true){ // buy
-            ans2 = -prices[day] + solve(prices, day + 1, transactionsLeft - 1, Memo);
-        }else{ // sell
-            ans2 = prices[day] + solve(prices, day + 1, transactionsLeft - 1, Memo);
+        if (transactionLeft % 2 == 0) {
+            // buy
+            ans2 =
+                -prices[day] + solve(prices, day + 1, transactionLeft - 1, dp);
+        } else {
+            // sell
+            ans2 =
+                +prices[day] + solve(prices, day + 1, transactionLeft - 1, dp);
         }
-        
-        return ans = max(ans1, ans2); // store ans in memo before returning
-        
-        
+        return dp[day][transactionLeft] = max(ans1, ans2);
     }
-    
-    
     int maxProfit(vector<int>& prices) {
-        
-        vector<vector<int>> Memo(prices.size(), vector<int>(5, -1));
-        int ans = solve(prices, 0, 4, Memo);
-        return ans;
-        
+        // edge case
+        int n = prices.size();
+        vector<vector<int>>dp(n, vector<int>(5, -1));
+        return solve(prices, 0, 4, dp); // prices , day , transactionLeft , dp
     }
 };
