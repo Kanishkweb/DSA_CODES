@@ -14,10 +14,9 @@ public:
         if(dp[i][j] != -1){
             return dp[i][j];
         }
-        obstacleGrid[i][j] =1; // marked as visited
+
         int down = solve(obstacleGrid, i + 1, j,dp);
         int right = solve(obstacleGrid, i, j + 1,dp);
-        obstacleGrid[i][j] = 0; // backtrack
         dp[i][j] = down + right;
         return dp[i][j];
     }
