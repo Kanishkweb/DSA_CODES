@@ -1,26 +1,45 @@
 class Solution {
 public:
-    int solve(string &word1, string &word2, int i, int j,
-              vector<vector<int>>& dp) {
-        int m = word1.length();
-        int n = word2.length();
-
-        if(i >= m) return n-j;
-        if(j >= n) return m-i; // store the result
-
-        if(dp[i][j] != -1) return dp[i][j];
-        if(word1[i] == word2[j]) return dp[i][j] = solve(word1,word2,i+1,j+1,dp);
-        int insert = 1 + solve(word1,word2,i,j+1,dp);
-        int del = 1 + solve(word1,word2,i+1,j,dp);
-        int replace = 1 + solve( word1, word2,i+1,j+1,dp);
-
-        dp[i][j] = min(insert,min(del,replace));
-        return dp[i][j];
-    }
     int minDistance(string word1, string word2) {
-        int m = word1.length();
-        int n = word2.length();
-        vector<vector<int>> dp(m, vector<int>(n, -1));
-        return solve(word1, word2, 0, 0, dp);
+
+        int n = word1.size();
+        int m = word2.size();
+
+        vector<vector<int>> dp(n + 1, vector<int>(m + 1, 0));
+
+        // base cases
+
+        // word1 exhausted
+        for (int j = 0; j <= m; j++) {
+            dp[n][j] = m - j;
+        }
+
+        // word2 exhausted
+        for (int i = 0; i <= n; i++) {
+            dp[i][m] = n - i;
+        }
+
+        // fill bottom-up
+        for (int i = n - 1; i >= 0; i--) {
+
+            for (int j = m - 1; j >= 0; j--) {
+
+                if (word1[i] == word2[j]) {
+
+                    dp[i][j] = dp[i + 1][j + 1];
+                } else {
+
+                    int insert = 1 + dp[i][j + 1];
+
+                    int replace = 1 + dp[i + 1][j + 1];
+
+                    int del = 1 + dp[i + 1][j];
+
+                    dp[i][j] = min(insert, min(replace, del));
+                }
+            }
+        }
+
+        return dp[0][0];
     }
 };
