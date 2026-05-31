@@ -1,23 +1,23 @@
 class Solution {
 public:
-    int solve(vector<int>& nums, int prev, int idx, vector<vector<int>>& dp) {
-        int n = nums.size();
-        if (idx >= n)
+    int n;
+    int dp[2501][2501];
+    int solve(vector<int>& nums, int i, int prev) {
+        // base case
+        if (i >= n)
             return 0;
-        if(prev != -1 && dp[idx][prev] != -1) return dp[idx][prev];
+        if(dp[i][prev+1] != -1) return dp[i][prev+1];
         int take = INT_MIN;
-        if (prev == -1 || nums[prev] < nums[idx]) {
-            take = 1 + solve(nums, idx, idx + 1, dp);
+        if (prev == -1 || nums[prev] < nums[i]) {
+            take = 1 + solve(nums, i + 1, i);
         }
-        int notTake = solve(nums, prev, idx + 1, dp);
-        if(prev != -1){
-            return dp[idx][prev] = max(take,notTake);
-        }
-        return max(take,notTake);
+        int notTake = solve(nums, i + 1, prev);
+
+        return dp[i][prev+1] = max(take,notTake);
     }
     int lengthOfLIS(vector<int>& nums) {
-        int n = nums.size();
-        vector<vector<int>> dp(n, vector<int>(n+1, -1));
-        return solve(nums, -1,0, dp);
+        n = nums.size();
+        memset(dp, -1, sizeof(dp));
+        return solve(nums, 0, -1);
     }
 };
