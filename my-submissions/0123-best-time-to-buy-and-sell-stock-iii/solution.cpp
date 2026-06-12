@@ -1,38 +1,24 @@
 class Solution {
 public:
-    int solve(vector<int>& prices, int day, int transactionLeft,
-              vector<vector<int>>& dp) {
-        // base case
-        int n = prices.size();
-        if (day >= n)
-            return 0;
-        if (transactionLeft == 0) {
-            return 0;
-        }
-
-        if (dp[day][transactionLeft] != -1)
-            return dp[day][transactionLeft];
-
-        // choise 1 -- skip
-        int ans1 = solve(prices, day + 1, transactionLeft, dp);
-
-        // choise 2 -- transaction - (buy,sell);
-        int ans2 = 0;
-        if (transactionLeft % 2 == 0) {
-            // buy
-            ans2 =
-                -prices[day] + solve(prices, day + 1, transactionLeft - 1, dp);
-        } else {
-            // sell
-            ans2 =
-                +prices[day] + solve(prices, day + 1, transactionLeft - 1, dp);
-        }
-        return dp[day][transactionLeft] = max(ans1, ans2);
-    }
     int maxProfit(vector<int>& prices) {
-        // edge case
-        int n = prices.size();
-        vector<vector<int>>dp(n, vector<int>(5, -1));
-        return solve(prices, 0, 4, dp); // prices , day , transactionLeft , dp
+
+        int buy1 = INT_MIN;
+        int sell1 = 0;
+
+        int buy2 = INT_MIN;
+        int sell2 = 0;
+
+        for (int price : prices) {
+
+            buy1 = max(buy1, -price);
+
+            sell1 = max(sell1, buy1 + price);
+
+            buy2 = max(buy2, sell1 - price);
+
+            sell2 = max(sell2, buy2 + price);
+        }
+
+        return sell2;
     }
 };
