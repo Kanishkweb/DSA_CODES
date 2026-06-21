@@ -11,22 +11,21 @@
  */
 class Solution {
 public:
-    int maxSum = INT_MIN;
-    int solve(TreeNode* root){
-      if(root == NULL) return 0;
+    int maxAns = INT_MIN;
+    int dfs(TreeNode* root){
+        // base case
+        if(root == nullptr) return 0;
 
-      int l = solve(root->left);
-      int r = solve(root->right);
-
-      int koi_ek_accha = max(l,r) + root->val;
-      int dono_path_accha = l + r + root->val;
-      int only_root_aacha = root->val;
-      maxSum = max(maxSum,max(dono_path_accha,max(koi_ek_accha,only_root_aacha)));  
-
-      return max(koi_ek_accha,only_root_aacha);
+        int left = max(0,dfs(root->left));
+        int right = max(0,dfs(root->right));
+        int koi_ek_aacha = max(left,right) + root->val;
+        int dono_path_aacha = left + right + root->val;
+        int only_root_aacha = root->val;
+        maxAns = max(maxAns,max(koi_ek_aacha,max(dono_path_aacha,only_root_aacha)));
+        return max(koi_ek_aacha,only_root_aacha);
     }
     int maxPathSum(TreeNode* root) {
-        solve(root);
-        return maxSum;
+         dfs(root);
+         return maxAns;
     }
 };
