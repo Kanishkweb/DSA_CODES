@@ -1,58 +1,42 @@
 class Solution {
 public:
-    class Graph {
-        int V;
-        list<int>* l;
-
-    public:
-        Graph(int V) {
-            this->V = V;
-            l = new list<int>[V];
-        }
-        void addEdge(int a, int b) {
-            l[a].push_back(b); // directed node
-        }
-        bool checkCycle(int currNode, vector<bool>& visited,
-                        vector<bool>& recPath,vector<int>&result) {
-            visited[currNode] = 1; // true
-            recPath[currNode] = 1; // true
-
-            for (int& node : l[currNode]) {
-                if (!visited[node]) {
-                    if (!checkCycle(node, visited, recPath,result)) {
-                        return false;
-                    }
-                } else if (recPath[node]) {
-                    return false;
-                }
-            }
-            // backtrack
-            result.push_back(currNode);
-            recPath[currNode] = 0; // false
-            return true;
-        }
-    };
-
     vector<int> findOrder(int numCourses, vector<vector<int>>& prerequisites) {
         int V = numCourses;
-        Graph g(V);
+        vector<vector<int>> adj(V);
+        vector<int> indegree(V, 0);
+        // add all the edges
         for (int i = 0; i < prerequisites.size(); i++) {
             int a = prerequisites[i][0];
             int b = prerequisites[i][1];
-            g.addEdge(a, b);
+            indegree[a]++;
+            adj[b].push_back(a); // directed edge;
         }
-        // first we will check if cycle exist
-        vector<bool> visited(V);
-        vector<bool> recPath(V);
-        stack<int> st;
-        vector<int> result;
+        // now the main logic of toposort
+        queue<int> q;
+        // push 0 indegree ele in the queue
         for (int i = 0; i < V; i++) {
-            if (!visited[i]) {
-                if (!g.checkCycle(i, visited, recPath,result)) {
-                    return {}; // pass empty vector
+            if (indegree[i] == 0) {
+                q.push(i);
+            }
+        }
+        vector<int> topo;
+        // now the legacy bfs code
+        while (!q.empty()) {
+            int node = q.front();
+            q.pop(); // front will pop from the queue;
+                     // push all the neighbours of the queue
+            topo.push_back(node);
+            for (auto nbr : adj[node]) {
+                indegree[nbr]--;
+
+                if (indegree[nbr] == 0) {
+                    q.push(nbr);
                 }
             }
         }
-        return result;
+        if (topo.size() != V) {
+            return {};
+        }
+       return topo;
     }
 };
