@@ -1,93 +1,92 @@
 class Solution {
 public:
     class Graph {
-    public:
         int V;
         list<int>* l;
 
+    public:
         Graph(int V) {
             this->V = V;
             l = new list<int>[V];
         }
 
-        void addEdge(int u, int v) {
-            l[u].push_back(v); // directed edge u → v
+        void addEdge(int a, int b) {
+            l[a].push_back(b); // directed edge;
+        }
+
+        vector<int> topoSort(vector<int>& indegree) {
+            vector<int> topo;
+            queue<int> q;
+            // nodes with zero indegree push into queue
+            for (int i = 1; i < V; i++) {
+                if (indegree[i] == 0) {
+                    q.push(i);
+                }
+            }
+            while (!q.empty()) {
+                int node = q.front();
+                topo.push_back(node);
+                q.pop();
+                // visit all the neighbours
+                for (auto& currNode : l[node]) {
+                    indegree[currNode]--;
+                    if (indegree[currNode] == 0) {
+                        q.push(currNode);
+                    }
+                }
+            }
+            return topo;
         }
     };
 
-    vector<int> topoSort(int V, vector<vector<int>> edges) {
-
-        // Step 1: Create graph
-        Graph g(V);
-        for (auto& e : edges) {
-            g.addEdge(e[0], e[1]);
-        }
-
-        // Step 2: Compute indegree
-        vector<int> indegree(V, 0);
-        for (int u = 0; u < V; u++) {
-            for (auto v : g.l[u]) {
-                indegree[v]++;
-            }
-        }
-
-        // Step 3: Push all nodes with indegree = 0
-        queue<int> q;
-        for (int i = 1; i < V; i++) {
-            if (indegree[i] == 0) {
-                q.push(i);
-            }
-        }
-
-        // Step 4: BFS
-        vector<int> topo;
-        while (!q.empty()) {
-            int node = q.front();
-            q.pop();
-
-            topo.push_back(node);
-
-            for (auto nbr : g.l[node]) {
-                indegree[nbr]--;
-
-                if (indegree[nbr] == 0) {
-                    q.push(nbr);
-                }
-            }
-        }
-        if (topo.size() != V-1) {
-            // cycle exists
-            return {};
-        }
-        return topo;
-    }
     vector<vector<int>> buildMatrix(int k, vector<vector<int>>& rowConditions,
                                     vector<vector<int>>& colConditions) {
-        int n = rowConditions.size();
-        int m = colConditions.size();
-        vector<int> row = topoSort(k + 1, rowConditions);
-        vector<int> col = topoSort(k + 1, colConditions);
+        
+        Graph g(k+1);
 
-        if(row.size() == 0 || col.size() == 0){
-            // cycle exist in graph
+        // addEdges to the graph
+        vector<int> indegree(k+1, 0);
+        for (int i = 0; i < rowConditions.size(); i++) {
+            int a = rowConditions[i][0];
+            int b = rowConditions[i][1];
+            indegree[b]++;
+            g.addEdge(a, b);
+        }
+        // perform a topo sort;
+        vector<int> topoRow = g.topoSort(indegree);
+        // cycle exists
+        if (topoRow.size() != k) {
             return {};
         }
-        unordered_map<int, int> colmap;
-        for (int i = 0; i < col.size(); i++) {
-            int val = col[i];
-            cout << val << endl;
-            colmap[val] = i; // val -->index
-        }
-        // result vector
-        vector<vector<int>> result(k, vector<int>(k, 0));
-        // iterate the row
-        for (int r = 0; r < row.size(); r++) {
-            int val = row[r];
-            int c = colmap[val];
-            // fill the correct position to the result matrix;
-            result[r][c] = val;
-        }
+        Graph h(k+1);
 
+        // addEdges to the graph
+        indegree.assign(k+1, 0);
+        for (int i = 0; i < colConditions.size(); i++) {
+            int a = colConditions[i][0];
+            int b = colConditions[i][1];
+            indegree[b]++;
+            h.addEdge(a, b);
+        }
+        vector<int> topoCol = h.topoSort(indegree);
+        // cycle exists
+        if (topoCol.size() != k) {
+            return {};
+        }
+        // for search operation in O(1) // we will make map;
+        unordered_map<int, int> mp;
+        for (int i = 0; i < topoCol.size(); i++) {
+            int node = topoCol[i];
+            mp[node] = i; // store node->idx;
+        }
+        // now the main logic build the matrix;
+        vector<vector<int>> result(k,
+                                   vector<int>(k, 0)); // k*k filled with zero;
+        for (int i = 0; i < topoRow.size(); i++) {
+            int node = topoRow[i];
+            int idxCol = mp[node];
+            result[i][idxCol] = node;
+        }
         return result;
     }
 };
