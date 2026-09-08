@@ -35,36 +35,27 @@ public:
 class Solution {
 public:
     bool equationsPossible(vector<string>& equations) {
+        int N = 200;
+        DSU dsu(N);
 
-        DSU dsu(26);
-
-        // Step 1: Process all "==" equations
-        for (auto &eq : equations) {
-
-            int a = eq[0] - 'a';
-            int b = eq[3] - 'a';
-
-            if (eq[1] == '=') {
+        for (auto& eq : equations) {
+            int a = eq[0];
+            int b = eq[3];
+            string comp = eq.substr(1, 2);
+            if (comp == "==") {
                 dsu.unionSet(a, b);
             }
         }
 
-        // Step 2: Check all "!=" equations
-        for (auto &eq : equations) {
-
-            int a = eq[0] - 'a';
-            int b = eq[3] - 'a';
-
-            if (eq[1] == '!') {
-
-                // If they belong to same component,
-                // they cannot be different.
-                if (dsu.find(a) == dsu.find(b)) {
-                    return false;
-                }
+        // now lets check all the != a and b
+        for (auto& eq : equations) {
+            int a = eq[0];
+            int b = eq[3];
+            string comp = eq.substr(1, 2);
+            if (comp == "!=" && dsu.find(a) == dsu.find(b)) {
+                return false;
             }
         }
-
         return true;
     }
 };
