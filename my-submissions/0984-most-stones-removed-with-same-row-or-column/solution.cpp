@@ -27,7 +27,7 @@ public:
         if (size[a] < size[b])
             swap(a, b);
 
-        parent[b] = a;       // Union by Size
+        parent[b] = a; // Union by Size
         size[a] += size[b];
     }
 };
@@ -35,23 +35,22 @@ public:
 class Solution {
 public:
     int removeStones(vector<vector<int>>& stones) {
-        int offSet = 10001;
-        int N = 20002;
+        int offSet = 100001;
+        int N = 200002;
 
         DSU dsu(N);
 
-        // iterate on the stone
-        for(auto & stone : stones){
+        for (auto& stone : stones) {
             int row = stone[0];
             int col = stone[1] + offSet;
 
-            dsu.unionSet(row,col);
+            dsu.unionSet(row, col);
         }
 
-        unordered_set<int>components;
-        for(auto & stone: stones){
-            int row = stone[0];
+        unordered_set<int> components;
+        for (auto& stone : stones) {
             // int col = stone[1] + offSet;
+            int row = stone[0];
 
             components.insert(dsu.find(row));
         }
