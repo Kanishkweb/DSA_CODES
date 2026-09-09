@@ -27,7 +27,7 @@ public:
         if (size[a] < size[b])
             swap(a, b);
 
-        parent[b] = a; // Union by Size
+        parent[b] = a;       // Union by Size
         size[a] += size[b];
     }
 };
@@ -35,17 +35,24 @@ public:
 class Solution {
 public:
     int makeConnected(int n, vector<vector<int>>& connections) {
-        if (connections.size() < n - 1) {
-            return -1;
-        }
+        int N = connections.size();
+        if(N < n-1) return -1;
+
         DSU dsu(n);
-        int component = n;
-        for (auto& comp : connections) {
-            if (dsu.find(comp[0]) != dsu.find(comp[1])) {
-                component--;
-                dsu.unionSet(comp[0], comp[1]);
+
+        for(auto & con : connections){
+            int a = con[0];
+            int b = con[1];
+            dsu.unionSet(a,b);
+        }
+
+        int count = 0;
+        for(int i = 0;i<n;i++){
+            if(dsu.find(i) == i){
+                count++;
             }
         }
-        return component - 1;
+
+        return count-1;
     }
 };
