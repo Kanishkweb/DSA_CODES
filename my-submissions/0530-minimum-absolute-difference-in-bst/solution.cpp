@@ -6,27 +6,27 @@
  *     TreeNode *right;
  *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
  *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
- *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left),
- * right(right) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
  * };
  */
 class Solution {
 public:
-    void helper(TreeNode* root, TreeNode*& prev, int& ans) {
-        if (root == NULL)
-            return;
-        helper(root->left, prev, ans);
-        if (root != NULL && prev != NULL) {
+    vector<int>arr;
+    void traverse(TreeNode* root){
+        if(root == nullptr) return;
 
-            ans = min(ans, abs(root->val - prev->val));
-        }
-        prev = root;
-        helper(root->right, prev, ans);
+        traverse(root->left);
+        arr.push_back(root->val);
+        traverse(root->right);
     }
     int getMinimumDifference(TreeNode* root) {
+        // if(root == nullptr) return 0;
+        traverse(root);
+        int n = arr.size();
         int ans = INT_MAX;
-        TreeNode* prev = NULL;
-        helper(root, prev, ans);
+        for(int i = 1;i<n;i++){
+            ans = min(ans,abs(arr[i]-arr[i-1]));
+        }
         return ans;
     }
 };
