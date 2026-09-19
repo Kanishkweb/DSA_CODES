@@ -12,21 +12,20 @@
  */
 class Solution {
 public:
-    bool solve(TreeNode*& root, long long min, long long max) {
-        if (root == NULL)
+    bool validate(TreeNode* root, long long min, long long max) {
+        if (root == nullptr) {
             return true;
-
-        if (root->val <= min) {
+        }
+        if (root->val <= min || root->val >= max) {
             return false;
         }
-        if (root->val >= max) {
-            return false;
-        }
+        return validate(root->left, min, root->val) &&
 
-        return solve(root->left, min, root->val) &&
-               solve(root->right, root->val, max);
+               validate(root->right, root->val, max);
     }
     bool isValidBST(TreeNode* root) {
-        return solve(root,LLONG_MIN,LLONG_MAX);
+        long long  min = LLONG_MIN;
+        long long max = LLONG_MAX;
+        return validate(root, min, max);
     }
 };
